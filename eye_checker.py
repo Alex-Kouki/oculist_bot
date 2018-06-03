@@ -6,6 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 # Discription of function Start
 def start(bot, update):
+    print ('sanёk')
     users[update.message.chat_id] = {'height': None, 'screen': None, 'left': None, 'right': None}
     """Send a message when the command /start is issued."""
     update.message.reply_text('Привет! Этот бот проверит твое зрение, а так же даст рекомендации.'
