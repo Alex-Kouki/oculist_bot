@@ -1,9 +1,8 @@
 import telegram
-import urllib
-import urllib3
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import config
-import json
+# import eye_checker
+
+keyboard_start = [[telegram.KeyboardButton('Проверка остроты зрения')],
+                  [telegram.KeyboardButton('Проверка цветовосприятия глаза')]]
 
 keyboard_height = [[telegram.KeyboardButton('150'),
                     telegram.KeyboardButton('155'),
@@ -45,14 +44,7 @@ keyboard_symbol_line = [[telegram.KeyboardButton('1'),
                          telegram.KeyboardButton('12'),
                          ]]
 
+keyboard_sex = [[telegram.KeyboardButton('Мужчина')],
+                [telegram.KeyboardButton('Женщина')]]
 
-def reply(msg=None, img=None):
-    if msg:
-        resp = urllib.urlopen('https://yandex.ru/search/?text=how%20to%20use%20inline%20keyboard%20python&&lr=213' + 'sendMessage', urllib.urlencode({
-            'chat_id': str(update.message.chat_id),
-            'text': msg.encode('utf-8'),
-            'disable_web_page_preview': 'true',
-            # 'reply_to_message_id': str(message_id),
-            'reply_markup': json.dumps({'inline_keyboard': [
-                [{'text': 'bline1', 'callback_data': 'bline1'}, {'text': 'bline2', 'callback_data': 'bline2'}]]}),
-        })).read()
+
