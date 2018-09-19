@@ -1,9 +1,11 @@
 import telegram
 # import eye_checker
 
+# Выбор режима
 keyboard_start = [[telegram.KeyboardButton('Проверка остроты зрения')],
                   [telegram.KeyboardButton('Проверка цветовосприятия глаза')]]
 
+# Режим остроты зрения
 keyboard_height = [[telegram.KeyboardButton('150'),
                     telegram.KeyboardButton('155'),
                     telegram.KeyboardButton('160'),

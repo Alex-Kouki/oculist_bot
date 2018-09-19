@@ -1,4 +1,4 @@
-#  Импортирую необходимые билбиотеки
+#  Импортирую необходимые библиотеки
 import telegram
 import time
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
@@ -6,9 +6,11 @@ import config
 import computing
 
 
-# Discription of function Startfin
+# Начало. Создается список пользователей, внутри параметров пользователя есть словарь с параметрами
+# Приветствие. отправка стратовых сообщений для начала общения с ботом
 def start(bot, update):
-    users[update.message.chat_id] = {'mode': None, 'height': None, 'screen': None, 'left': None, 'right': None}
+    users[update.message.chat_id] = {'mode': None, 'height': None, 'screen': None,
+                                     'left': None, 'right': None}
 
     # отправка сообщения после нажатия /start
     update.message.reply_text('Привет! Этот бот проверит твое зрение, а так же даст рекомендации.')
@@ -22,23 +24,17 @@ def start(bot, update):
                     reply_markup=markup)
 
 
-def colours(bot, update):
-    users[update.message.chat_id] = {'sex': None, 'first': None, 'second': None, 'third': None}
-    markup = telegram.ReplyKeyboardMarkup(config.keyboard_sex, one_time_keyboard=True, resize_keyboard=True)
-    bot.sendMessage(chat_id=update.message.chat_id,
-                    text="Укажите пол",
-                    reply_markup=markup)
-    return
-
-
+# Описание основной функции, собирающей информацию с помощью клавиатур
 def height_screen(bot, update):
     user_message = update.message.text
     print(user_message)
+    # Если режим Четкости зрения
     if user_message == 'Проверка остроты зрения' and\
        users[update.message.chat_id]['mode'] is None:
         print(user_message)
         users[update.message.chat_id]['mode'] = user_message
         print(users)
+        # Задается клавиатура с кнопками роста
         markup = telegram.ReplyKeyboardMarkup(config.keyboard_height,
                                               one_time_keyboard=True,
                                               resize_keyboard=True)
@@ -46,18 +42,23 @@ def height_screen(bot, update):
                         text="Укажите Ваш рост в сантиметрах (только цифры)",
                         reply_markup=markup)
         print(users)
+        # возврат из функции для продолжения сбора данных
         return
+    # При выборе проверки Цветовосприятия
     elif user_message == 'Проверка цветовосприятия глаза' and\
          users[update.message.chat_id]['mode'] is None:
         users[update.message.chat_id]['mode'] = user_message
         colours(bot, update)
+        # возврат из функции для продолжения сбора данных
         return
+    # Если вместо предложенных вариантов клавиатуры выбора режима написали что-то другое
     elif users[update.message.chat_id]['mode'] is None and\
          user_message != 'Проверка остроты зрения' and\
          user_message != 'Проверка цветовосприятия глаза':
         update.message.reply_text('Клацни на режим')
         return
 
+    # Выбран режим Четкости зрения. Продолжение ввода данных для вычислений
     if users[update.message.chat_id]['mode'] == 'Проверка остроты зрения':
         try:
             user_message = float(user_message)
@@ -80,12 +81,13 @@ def height_screen(bot, update):
                                 text='Укажите Ваш рост в сантиметрах от 150 до 200 см (только цифры)',
                                 reply_markup=markup)
             return
-
+        # Последняя проверка на ввод данных(размер экрана)
         elif users[update.message.chat_id]['screen'] is None:
             # Если размер экрана введен корректно, то добавляем в users['screen']
             if 4.0 <= user_message <= 7.0:
                 users[update.message.chat_id]['screen'] = user_message
                 # We get the correct 'height' and 'screen'
+                # Даем инструкцию
                 update.message.reply_text('Инструкция: Откройте изображение в полном размере,'
                                           'держите телефон в вертикальном положении на вытянутой руке на уровне глаз.'
                                           'Вы должны закрыть сначала правый глаз и прочитать буквы, находящиеся слева.'
@@ -110,6 +112,7 @@ def height_screen(bot, update):
                                 text="Укажите номер ряда с наименьшим размером букв, который "
                                      "Вам удалось верно прочесть левым глазом)",
                                 reply_markup=markup)
+            # Если диагональ телефона указана некорректно
             else:
                 markup = telegram.ReplyKeyboardMarkup(config.keyboard_screen,
                                                       one_time_keyboard=True,
@@ -161,19 +164,34 @@ def height_screen(bot, update):
             return
 
 
+# При выборе режима "Цветовосприятие" изменяется словарь пользователя
+# Заполнение словаря кликами кнопок с вариантами ответов на вопросы
+def colours(bot, update):
+    users[update.message.chat_id] = {'sex': None, 'first': None, 'second': None, 'third': None}
+    markup = telegram.ReplyKeyboardMarkup(config.keyboard_sex, one_time_keyboard=True, resize_keyboard=True)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text="Укажите пол",
+                    reply_markup=markup)
+    return
+
+
+# Описание функции с отправкой фотки
+# Здесь можно будет ее модернизировать, сделать выбор разных фоток
 def image_sivcev():
-    # if users[telegram.update.message.chat_id]['screen'] == 5.5:
     telegram.bot.send_photo(chat_id=telegram.update.message.chat.id,
                             photo=open('/home/al/PycharmProjects/oculist_bot_new/rings.jpg', 'rb'))
 
 
+# Баовая телеграмм-функция описания начала работы
 def main():
+    # ТОКЕН
     updater = Updater("598361564:AAFx-LArh5brPzPY8PPpxq7Te_8fn9k-SOw")
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # if handler start WITH /(command)
+    # Здесь можно будет добавить режимы
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("colours", colours))
     # dp.add_handler(CommandHandler("help", help))
